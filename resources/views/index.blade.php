@@ -1,6 +1,8 @@
 @extends('layouts.master')
 
 @section('content')
+    @include('components.header')
+
     <div class="container mt-3">
         <h2>Nuestros destinos más populares</h2>
         <div class="row">
