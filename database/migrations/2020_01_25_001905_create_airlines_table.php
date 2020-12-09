@@ -23,9 +23,9 @@ class CreateAirlinesTable extends Migration
         });
 
         DB::table('airlines')->insert([
-            ['name' => 'Tiger Travels', 'slug' => 'tiger-travels', 'primary_color' => '#508AA8', 'secondary_color' => '#D8E4FF'],
-            ['name' => 'Phalcon Airlines', 'slug' => 'phalcon-airlines', 'primary_color' => '#35605A', 'secondary_color' => '#00120B'],
-            ['name' => 'Crocodile Jets', 'slug' =>'crocodile-jets', 'primary_color' => '#4C6663', 'secondary_color' => '#A31621'],
+            ['name' => 'Tiger Travels', 'slug' => 'TTR', 'primary_color' => '#508AA8', 'secondary_color' => '#D8E4FF'],
+            ['name' => 'Phalcon Airlines', 'slug' => 'PAS', 'primary_color' => '#35605A', 'secondary_color' => '#00120B'],
+            ['name' => 'Lion Air', 'slug' =>'LNA', 'primary_color' => '#4C6663', 'secondary_color' => '#A31621']
         ]);
     }
 

@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 
 class FlightController extends Controller
 {
-    public function index(Request $request) {
+    public function search(Request $request) {
+        // YOUR CODE HERE
 
-        return view('flights');
+        return response()->json([
+            'data' => null
+        ]);
     }
 }

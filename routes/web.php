@@ -10,6 +10,3 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', 'IndexController@index');
-Route::get('/flights', 'FlightController@index');
