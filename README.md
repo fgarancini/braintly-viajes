@@ -30,91 +30,95 @@ Se deben mostrar 3 opciones con vuelo directo y 2 opciones con escala (en caso d
 Ejemplo de request:
 ```javascript
 {
-  "occupants": 2,
-  "departure_airport": "AEP",
-  "arrival_airport": "NYC",
-  "check_in": 2020-12-14, 
-  "check_out": 2021-01-3, 
-  "type": "economic",
-}
-```
-
-Ejemplo de response:
-```javascript
-{
   "data": {
-    "departure": {
-      "departure_airport": "EZE",
-      "arrival_airport": "NYC",
-      "check_in": "2020-12-14",
-      "options": [
-        [{ // vuelo directo
-          "airline": "LIONAIR",
-          "flight_number": "LNR-003",
-          "departure_airport": "EZE",
-          "arrival_airport": "NYC",
-          "departure_date": "2020-12-14 14:00:00",
-          "arrival_date": "2020-12-14 23:00:00",
-          "price": 2000,
-          "type": "economic"
-        }],
-        [{ // vuelo con escala
-          "airline": "LIONAIR",
-          "flight_number": "LNR-005",
-          "departure_airport": "EZE",
-          "arrival_airport": "SCL",
-          "departure_date": "2020-12-14 12:00:00",
-          "arrival_date": "2020-12-14 15:00:00",
-          "price": 2000,
-          "type": "economic"
-        },{
-          "airline": "LIONAIR",
-          "flight_number": "LNR-008",
-          "departure_airport": "SCL",
-          "arrival_airport": "NYK",
-          "departure_date": "2020-12-14 17:00:00",
-          "arrival_date": "2020-12-14 22:00:00",
-          "price": 2000,
-          "type": "economic"
-        }]
-      ]
-    },
-    "return": {
-      "departure_airport": "NYC",
-      "arrival_airport": "EZE",
-      "check_out": "2021-01-03",
-      "options": [
-        [{
-          "airline": "LIONAIR",
-          "flight_number": "LNR-008",
-          "departure_airport": "NYC",
-          "arrival_airport": "EZE",
-          "departure_date": "2021-01-03 04:00:00",
-          "arrival_date": "2021-01-03 17:00:00",
-          "price": 2000,
-          "type": "economic"
-        }],
-        [{
-          "airline": "LIONAIR",
-          "flight_number": "LNR-009",
-          "departure_airport": "NYC",
-          "arrival_airport": "SCL",
-          "departure_date": "2021-01-03 05:00:00",
-          "arrival_date": "2021-01-03 15:00:00",
-          "price": 2000,
-          "type": "economic"
-        },{
-          "airline": "LIONAIR",
-          "flight_number": "LNR-008",
-          "departure_airport": "SCL",
-          "arrival_airport": "EZE",
-          "departure_date": "2021-01-03 15:30:00",
-          "arrival_date": "2021-01-03 18:00:00",
-          "price": 2000,
-          "type": "economic"
-        }]
-      ]
-    }
+    "departures": [
+      {
+        "total_price": 4000,
+        "type": "Non-stop flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-003",
+            "departure_airport": "EZE",
+            "arrival_airport": "NYC",
+            "departure_date": "2020-12-14 14:00:00",
+            "arrival_date": "2020-12-14 23:00:00",
+            "price": 4000,
+            "type": "economic"
+          }
+        ], 
+      },
+      {
+        "total_price": 3000,
+        "type": "Stopover flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-004",
+            "departure_airport": "EZE",
+            "arrival_airport": "SCL",
+            "departure_date": "2020-12-13 12:00:00",
+            "arrival_date": "2020-12-13 17:00:00",
+            "price": 1200,
+            "type": "economic"
+          },
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-005",
+            "departure_airport": "SCL",
+            "arrival_airport": "NYC",
+            "departure_date": "2020-12-13 20:00:00",
+            "arrival_date": "2020-12-14 04:00:00",
+            "price": 3800,
+            "type": "economic"
+          }
+        ],
+      }
+    ],
+    "returns": [
+      {
+        "total_price": 3800,
+        "type": "Non-stop flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-008",
+            "departure_airport": "NYC",
+            "arrival_airport": "EZE",
+            "departure_date": "2020-12-18 02:00:00",
+            "arrival_date": "2020-12-18 10:00:00",
+            "price": 3800,
+            "type": "economic"
+          }
+        ], 
+      },
+      {
+        "total_price": 2820,
+        "type": "Connecting flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-0012",
+            "departure_airport": "NYC",
+            "arrival_airport": "SCL",
+            "departure_date": "2020-12-18 05:00:00",
+            "arrival_date": "2020-12-13 17:00:00",
+            "price": 1200,
+            "type": "economic"
+          },
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-0013",
+            "departure_airport": "SCL",
+            "arrival_airport": "EZE",
+            "departure_date": "2020-12-18 14:00:00",
+            "arrival_date": "2020-12-18 16:00:00",
+            "price": 3500,
+            "type": "economic"
+          }
+        ],
+      }
+    ]
   }
 }
 
@@ -126,7 +130,7 @@ Ejemplo de response:
     * Si el vuelo es dentro de las próximas 24 horas, se suma un 35% al precio del pasaje.
     * Si el vuelo es dentro de los próximos 7 dias, se suma un 20% al preciod el pasaje.
     * La primera clase cuesta un 40% más que la clase económica para todos los casos.
-    * Todos los vuelos con escala tienen un 30% de descuento en su precio final.
+    * Todos los vuelos con escala tienen un 40% de descuento en su precio final.
 
 ## Entregable
 
@@ -141,7 +145,7 @@ Se tendrán en cuenta:
 * Buen uso de MVC.
 * Buen diseño de las consultas a la base de datos.
 
-No te preocupes si hay alguno de los puntos que no te sale muy bien ¡no tiene que estar perfecto, ¡no tiene que estar perfecto! valoramos el esfuerzo así que no te rindas
+No te preocupes si hay alguno de los puntos que no te sale muy bien, ¡no tiene que estar perfecto! valoramos el esfuerzo así que no te rindas
 
 El entregable debe ser el código fuente de la solución subida a un repositorio en Github. Por favor compartir el ejercicio a la cuenta [@lucasbraintly](https://github.com/lucasbraintly).
 
