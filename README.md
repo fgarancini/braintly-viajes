@@ -12,14 +12,14 @@ El código está basado en el Framework Laravel y ya trae toda la base de códig
 
 Se le pide al desarrollador implementar los siguientes métodos:
 1. Un endpoint que le recomiende al usuario 10 vuelos distintos que mejor se ajusten a su necesidad. El usuario enviará la siguiente información:
-```json
+```javascript
 {
-  "occupants": numeric,
-  "departure_airport": string (IATA code),
-  "arrival_airport": string (IATA code),
-  "check_in": date (yyy-mm-dd), 
-  "check_out": date (yyy-mm-dd), 
-  "type": economic|firstclass,
+  "occupants": "numeric",
+  "departure_airport": "string" // (IATA code),
+  "arrival_airport": "string" // (IATA code),
+  "check_in": "date" // (yyy-mm-dd), 
+  "check_out": "date" // (yyy-mm-dd), 
+  "type": "economic|firstclass",
 }
 ```
 
@@ -28,7 +28,7 @@ El sistema debe recomendarle 5 vuelos de ida y 5 de vuelta que sean cerca de las
 Se deben mostrar 3 opciones con vuelo directo y 2 opciones con escala (en caso de que el vuelo admita escala). 
 
 Ejemplo de request:
-```json
+```javascript
 {
   "occupants": 2,
   "departure_airport": "AEP",
@@ -40,7 +40,7 @@ Ejemplo de request:
 ```
 
 Ejemplo de response:
-```json
+```javascript
 {
   "data": {
     "departure": {
@@ -125,12 +125,12 @@ Ejemplo de response:
 * El precio de cada pasaje estará dado por la siguiente fórmula:
     * Si el vuelo es dentro de las próximas 24 horas, se suma un 35% al precio del pasaje.
     * Si el vuelo es dentro de los próximos 7 dias, se suma un 20% al preciod el pasaje.
-    * Si el vuelo tiene menos de 10 asientos disponibles, se suma un 8% al precio del pasaje.
     * La primera clase cuesta un 40% más que la clase económica para todos los casos.
+    * Todos los vuelos con escala tienen un 30% de descuento en su precio final.
 
 ## Entregable
 
-Junto con la consigna se entrega un archivo `.sql` (Mysql) para que tengas una DB hidratada para trabajar.
+Junto con la consigna se entrega un archivo `.sql` (Mysql) para que tengas una DB hidratada con la que trabajar.
 
 El ejercicio puede desarrollarse en PHP o NodeJS haciendo uso de los frameworks o librerias que necesites. (Sumás puntos si lo hacés en Laravel o Lumen ya que son las tecnologías con las que trabajamos en Braintly)
 
@@ -141,7 +141,7 @@ Se tendrán en cuenta:
 * Buen uso de MVC.
 * Buen diseño de las consultas a la base de datos.
 
-No te preocupes si hay alguno de los puntos que no te sale muy bien, intentá resolverlo como puedas, ¡no tiene que estar perfecto!
+No te preocupes si hay alguno de los puntos que no te sale muy bien ¡no tiene que estar perfecto, ¡no tiene que estar perfecto! valoramos el esfuerzo así que no te rindas
 
 El entregable debe ser el código fuente de la solución subida a un repositorio en Github. Por favor compartir el ejercicio a la cuenta [@lucasbraintly](https://github.com/lucasbraintly).
 
