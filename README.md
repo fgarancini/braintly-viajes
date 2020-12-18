@@ -123,8 +123,8 @@ Ejemplo de response:
             "flight_number": "LNR-0013",
             "departure_airport": "SCL",
             "arrival_airport": "EZE",
-            "departure_date": "2020-12-18 14:00:00",
-            "arrival_date": "2020-12-18 16:00:00",
+            "departure_date": "2020-12-18 19:00:00",
+            "arrival_date": "2020-12-18 22:00:00",
             "price": 3500,
             "type": "economic"
           }
