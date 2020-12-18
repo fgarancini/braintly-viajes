@@ -27,7 +27,19 @@ El sistema debe recomendarle 5 vuelos de ida y 5 de vuelta que sean cerca de las
 
 Se deben mostrar 3 opciones con vuelo directo y 2 opciones con escala (en caso de que el vuelo admita escala). 
 
-Ejemplo de request:
+Ejemplo de response:
+```javascript
+{
+  "occupants": 2,
+  "departure_airport": "EZE",
+  "arrival_airport": "NYC",
+  "check_in": 2020-12-14, 
+  "check_out": 2020-12-18, 
+  "type": "economic",
+}
+```
+
+Ejemplo de response:
 ```javascript
 {
   "data": {
