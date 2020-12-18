@@ -94,7 +94,7 @@ Ejemplo de request:
       },
       {
         "total_price": 2820,
-        "type": "Connecting flight",
+        "type": "Stopover flight",
         "flights": [
           {
             "airline": "LIONAIR",
@@ -102,7 +102,7 @@ Ejemplo de request:
             "departure_airport": "NYC",
             "arrival_airport": "SCL",
             "departure_date": "2020-12-18 05:00:00",
-            "arrival_date": "2020-12-13 17:00:00",
+            "arrival_date": "2020-12-18 17:00:00",
             "price": 1200,
             "type": "economic"
           },
