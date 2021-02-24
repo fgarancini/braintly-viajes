@@ -6,8 +6,6 @@ BraintlyViajes es un microservicio dedicado a gestionar la disponibilidad de via
 
 Su principal propósito es servir una API que, dadas las necesidades del usuario, indique cuáles son los vuelos disponibles entre dos puntos.
 
-El código está basado en el Framework Laravel y ya trae toda la base de código necesaria para comenzar a implementar la funcionalidad. Braintly brinda las migraciones, los modelos, las rutas y la estructura de los request y los responses para que el desarrollador pueda realizar la implementación comodamente.
-
 ## Consigna
 
 Se le pide al desarrollador implementar los siguientes métodos:
