@@ -10,4 +10,5 @@ class Airline extends Model
     {
         return $this->hasMany('App\\Models\\Airplane');
     }
+
 }

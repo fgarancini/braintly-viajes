@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use App\Models\Airport;
 use App\Models\Distance;
@@ -6,6 +7,7 @@ use App\Models\Flight;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+
 
 class DistanceSeeder extends Seeder
 {
@@ -32,7 +34,7 @@ class DistanceSeeder extends Seeder
     }
 
     /**
-     * Run the database seeds.
+     * Run the database seeders.
      *
      * @return void
      */
