@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreGetRequest;
 use Illuminate\Http\Request;
-use App\Services\FlightService;
-use Illuminate\Support\Facades\Validator;
+use App\Services\FlightConsultService;
 
 class FlightController extends Controller
 {
-    protected FlightService $flight_service;
+    protected FlightConsultService $consult_service;
 
-    public function __construct(FlightService $service)
+    public function __construct(FlightConsultService $service)
     {
-        $this->flight_service = $service;
+        $this->consult_service = $service;
     }
 
     public function search(Request $request)
@@ -27,8 +25,9 @@ class FlightController extends Controller
             'type' => 'required'
         ]);
 
+
         return response()->json([
-            'data' => $request->all()
+            'data' => $this->consult_service->search_flight($flight_req)
         ]);
     }
 

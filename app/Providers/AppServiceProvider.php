@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Flight;
-use App\Services\FlightService;
 use Illuminate\Support\ServiceProvider;
+use App\Services\FlightConsultService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,8 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(FlightService::class, function ($app) {
-            return new FlightService($app->make(Flight::class));
+        $this->app->bind(FlightConsultService::class, function ($app) {
+            return new FlightConsultService();
         });
     }
 
