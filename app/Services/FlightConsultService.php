@@ -21,38 +21,49 @@ class FlightConsultService
         $this->arrival_airport = $search['arrival_airport'];
         $this->check_in = $search['check_in'];
         $this->check_out = $search['check_out'];
-        $this->type = $search['type'];
+        $this->type = $search['type'] == 'economic' ? 'economy' : 'first_class';
     }
 
     public function search_flight($search)
     {
         $this->initConsult($search);
 
-        return $this->search_check_in();
+        $check_ins = $this->search_flights($this->departure_airport, $this->arrival_airport, $this->check_in);
+        $check_outs = $this->search_flights($this->arrival_airport, $this->departure_airport, $this->check_out);
+
+        return array('Salida' =>
+            [
+                'departure_airport' => $this->departure_airport,
+                'arrival_airport' => $this->arrival_airport,
+                'check_in' => $this->check_in,
+                'options' => $check_ins
+            ], 'Vuelta' => $check_outs);
     }
 
 
-    private function search_check_in()
+    private function search_flights($depart, $arrival, $date)
     {
         return Flight::select(
             [
-                'code',
-                'departure_airport_id',
-                'arrival_airport_id',
+                'airlines.name AS airline',
+                'code AS flight_number',
+                'airport_depart.iata_code AS departure_airport',
+                'airport_arrival.iata_code AS arrival_airport',
                 'departure_date',
                 'arrival_date',
-                'airplane_id',
-                'duration',
-                'base_price',
-                'status',
-                'airlines.name'
+                'base_price as price',
             ])
             ->join('airports AS airport_depart', 'flights.departure_airport_id', '=', 'airport_depart.id')
             ->join('airports AS airport_arrival', 'flights.arrival_airport_id', '=', 'airport_arrival.id')
             ->join('airlines', DB::raw('substr(flights.code,1,3)'), '=', 'airlines.slug')
-            ->where('airport_depart.iata_code', '=', $this->departure_airport)
-            ->where('airport_arrival.iata_code', '=', $this->arrival_airport)
-            ->whereTime('departure_date', '>=', $this->check_in)
+            ->join('airplanes', 'airlines.id', '>=', 'airplanes.airline_id')
+            ->where('airplanes.' . $this->type . '_class_seats', '>=', $this->occupants)
+            ->where('airport_depart.iata_code', '=', $depart)
+            ->where('airport_arrival.iata_code', '=', $arrival)
+            ->whereTime('departure_date', '>=', $date)
+            ->orderBy('departure_date', 'ASC')
+            ->limit(5)
             ->get();
     }
+    
 }
