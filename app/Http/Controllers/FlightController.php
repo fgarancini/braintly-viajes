@@ -22,7 +22,7 @@ class FlightController extends Controller
             "arrival_airport" => 'required|string|size:3',
             "check_in" => 'required|date',
             'check_out' => 'required|date',
-            'type' => 'required'
+            'type' => 'required|in:economic,firstclass'
         ]);
 
 
