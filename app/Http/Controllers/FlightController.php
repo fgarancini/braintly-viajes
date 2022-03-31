@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\FlightSearchRequest;
 use App\Services\FlightConsultService;
+use Illuminate\Http\Request;
 
 class FlightController extends Controller
 {
@@ -14,21 +15,10 @@ class FlightController extends Controller
         $this->consult_service = $service;
     }
 
-    public function search(Request $request)
+    public function search(FlightSearchRequest $request)
     {
-        $flight_req = $request->validate([
-            "occupants" => 'required|numeric',
-            "departure_airport" => 'required|string|size:3',
-            "arrival_airport" => 'required|string|size:3',
-            "check_in" => 'required|date',
-            'check_out' => 'required|date',
-            'type' => 'required|in:economic,firstclass'
-        ]);
-
-
         return response()->json([
-            'data' => $this->consult_service->search_flight($flight_req)
+            'data' => $this->consult_service->search_flight($request->validated())
         ]);
     }
-
 }

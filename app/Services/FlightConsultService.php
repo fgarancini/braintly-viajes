@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Distance;
 use App\Models\Flight;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Facades\DB;
 
 class FlightConsultService
@@ -30,15 +31,19 @@ class FlightConsultService
         $this->initConsult($search);
 
         $check_ins = $this->search_flights($this->departure_airport, $this->arrival_airport, $this->check_in);
+        $scale_check_in = $this->match_flights($this->departure_airport, $this->arrival_airport, $this->check_in);
+
         $check_outs = $this->search_flights($this->arrival_airport, $this->departure_airport, $this->check_out);
+        $scale_check_out = $this->match_flights($this->arrival_airport, $this->departure_airport, $this->check_out);
 
         return array('Salida' =>
             [
                 'departure_airport' => $this->departure_airport,
                 'arrival_airport' => $this->arrival_airport,
                 'check_in' => $this->check_in,
-                'options' => $check_ins
-            ], 'Vuelta' => $check_outs);
+                'options' => $check_ins,
+                'scales' => $scale_check_in
+            ], 'Vuelta' => $check_outs, 'scales' => $scale_check_out);
     }
 
 
@@ -46,13 +51,14 @@ class FlightConsultService
     {
         return Flight::select(
             [
+                'flights.id',
                 'airlines.name AS airline',
-                'code AS flight_number',
+                'flights.code AS flight_number',
                 'airport_depart.iata_code AS departure_airport',
                 'airport_arrival.iata_code AS arrival_airport',
-                'departure_date',
-                'arrival_date',
-                'base_price as price',
+                'flights.departure_date',
+                'flights.arrival_date',
+                'flights.base_price as price',
             ])
             ->join('airports AS airport_depart', 'flights.departure_airport_id', '=', 'airport_depart.id')
             ->join('airports AS airport_arrival', 'flights.arrival_airport_id', '=', 'airport_arrival.id')
@@ -61,16 +67,22 @@ class FlightConsultService
             ->where('airplanes.' . $this->type . '_class_seats', '>=', $this->occupants)
             ->where('airport_depart.iata_code', '=', $depart)
             ->where('airport_arrival.iata_code', '=', $arrival)
-            ->whereTime('departure_date', '>=', $date)
-            ->orderBy('departure_date', 'ASC')
+            ->where('flights.departure_date', '>=', $date)
+            ->orderBy('flights.departure_date', 'ASC')
             ->limit(5)
             ->get();
     }
 
-    private function search_scales()
+    private function search_scales($depart, $arrival, $date, $scale)
     {
+
+        $condition_depart = $scale ? '<>' : '=';
+        $condition_arrival = $scale ? '=' : '<>';
+
+
         return Flight::distinct()->select
         ([
+            'flights.id',
             'airlines.name AS airline',
             'code AS flight_number',
             'airport_depart.iata_code AS departure_airport',
@@ -81,19 +93,32 @@ class FlightConsultService
         ])
             ->join('airports AS airport_depart', 'flights.departure_airport_id', '=', 'airport_depart.id')
             ->join('airports AS airport_arrival', 'flights.arrival_airport_id', '=', 'airport_arrival.id')
-            ->join('airlines', DB::raw('substr(flights.code,1,3)'), '=', 'airlines.slug')
             ->join('distances AS salida', 'salida.airport_1', '=', 'airport_depart.iata_code')
             ->join('distances AS llegada', 'llegada.airport_2', '=', 'airport_arrival.iata_code')
+            ->join('airlines', DB::raw('substr(flights.code,1,3)'), '=', 'airlines.slug')
             ->join('airplanes', 'airlines.id', '=', 'airplanes.airline_id')
-            ->where('airport_depart.iata_code', '=', $this->departure_airport)
-            ->where('airport_arrival.iata_code', '<>', $this->arrival_airport)
-            ->where('flights.departure_date', '>=', '2022-03-29')
-            ->where('flights.departure_date', '<=', date_add(date_create('2022-03-29'), date_interval_create_from_date_string('5 days')))
+            ->where('airport_depart.iata_code', $condition_depart, $depart)
+            ->where('airport_arrival.iata_code', $condition_arrival, $arrival)
+            ->where('flights.departure_date', '>=', $date)
             ->orderBy('departure_date', 'ASC')
             ->limit(5)
             ->get();
 
-//            ->whereBetween('flights.departure_date', ['2022-03-29', DB::raw('DATE_ADD(2022-03-29,INTERVAL 5 DAY)')])
     }
 
+    public function match_flights($depart, $arrival, $date): array|string
+    {
+        $response = null;
+        $first_flight = $this->search_scales($depart, $arrival, $date, false);
+        $second_flight = $this->search_scales($depart, $arrival, $date, true);
+
+        foreach ($first_flight as $flight) {
+            for ($i = 0; $i < count($second_flight); $i++) {
+                if ($second_flight[$i]['departure_date'] >= $flight['arrival_date'] && $flight['arrival_airport'] == $second_flight[$i]['departure_airport']) {
+                    $response = array($flight, $second_flight[$i]);
+                }
+            }
+        }
+        return $response ?? 'The are not available scales for this flights.';
+    }
 }
