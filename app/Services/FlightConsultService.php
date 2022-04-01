@@ -97,7 +97,7 @@ class FlightConsultService
         $condition_arrival = $scale ? '=' : '<>';
 
 
-        return Flight::distinct()->select
+        $scales = Flight::distinct()->select
         ([
             'flights.id',
             'airlines.name AS airline',
@@ -118,16 +118,10 @@ class FlightConsultService
             ->where('airport_arrival.iata_code', $condition_arrival, $arrival)
             ->where('flights.departure_date', '>=', $date)
             ->orderBy('departure_date', 'ASC')
-            ->limit(5)
+            ->limit(6)
             ->get();
 
-    }
-
-    private function search_seats_disponibility($airplane_id): bool
-    {
-        $seats = Airplane::select($this->type . '_class_seats')->where('id', '=', $airplane_id)->get();
-
-        return $seats[0][$this->type . '_class_seats'] < 10;
+        return $scales;
     }
 
     private function is_scale_needed($depart, $arrival): bool
@@ -138,6 +132,31 @@ class FlightConsultService
             ->get();
 
         return $distance[0]['kilometers'] >= 5000;
+    }
+
+    private function calc_scales_distances($scales)
+    {
+        $total_kilometers = 0;
+
+        $no_scales = Distance::select('kilometers')
+            ->where('airport_1', '=', $scales[0]->departure_airport)
+            ->where('airport_2', '=', $scales[1]->arrival_airport)
+            ->get();
+        $barrier_of_kilometers = $no_scales[0]['kilometers'] + ($no_scales[0]->kilometers * 30 / 100);
+
+        $first_flight = Distance::select('kilometers')
+            ->where('airport_1', '=', $scales[0]->departure_airport)
+            ->where('airport_2', '=', $scales[0]->arrival_airport);
+        $second_flight = Distance::select('kilometers')
+            ->where('airport_1', '=', $scales[1]->departure_airport)
+            ->where('airport_2', '=', $scales[1]->arrival_airport)
+            ->union($first_flight)->get();
+
+        foreach ((object)$second_flight as $distance) {
+            $total_kilometers = $total_kilometers + $distance->kilometers;
+        }
+
+        return $total_kilometers > $barrier_of_kilometers;
     }
 
     private function match_flights($depart, $arrival, $date): array|string
@@ -153,10 +172,14 @@ class FlightConsultService
                 }
             }
         }
-        return $response ?? 'The are not available scales for this flights.';
+
+        if ($this->calc_scales_distances($response))
+            return $response;
+
+        return 'The are not available scales for this flights.';
     }
 
-    public function calc_final_price($flight)
+    private function calc_final_price($flight)
     {
         $on_day = false;
         if (strtotime($flight->departure_date) <= strtotime('1 day')) {
@@ -176,5 +199,14 @@ class FlightConsultService
         }
 
         return $flight;
+    }
+
+    private function search_seats_disponibility($airplane_id): bool
+    {
+        $seats = Airplane::select($this->type . '_class_seats')
+            ->where('id', '=', $airplane_id)
+            ->get();
+
+        return $seats[0][$this->type . '_class_seats'] < 10;
     }
 }
